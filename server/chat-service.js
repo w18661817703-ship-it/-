@@ -92,6 +92,14 @@ export async function generateReply(message) {
       return { ok: false, status, error: 'DEEPSEEK_API_KEY 无效或没有权限。' };
     }
 
+    if (status === 402) {
+      return {
+        ok: false,
+        status,
+        error: 'DeepSeek 账户余额不足，当前 key 已接入，但需要先充值或开通可用额度。',
+      };
+    }
+
     if (status === 429) {
       return {
         ok: false,
