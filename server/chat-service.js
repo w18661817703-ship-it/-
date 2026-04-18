@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 
-export const DEFAULT_MODEL = 'gpt-5.2';
+export const DEFAULT_MODEL = 'deepseek-chat';
 
 export const SYSTEM_PROMPT = `你是一个“高情商阴阳怪气回复大师”。
 
@@ -31,12 +31,18 @@ function resolveStatus(error) {
 }
 
 export function getModel() {
-  return process.env.OPENAI_MODEL || DEFAULT_MODEL;
+  return process.env.DEEPSEEK_MODEL || DEFAULT_MODEL;
 }
 
 export function getClient() {
-  const apiKey = process.env.OPENAI_API_KEY;
-  return apiKey ? new OpenAI({ apiKey }) : null;
+  const apiKey = process.env.DEEPSEEK_API_KEY;
+
+  return apiKey
+    ? new OpenAI({
+        apiKey,
+        baseURL: 'https://api.deepseek.com/v1',
+      })
+    : null;
 }
 
 export async function generateReply(message) {
@@ -49,21 +55,28 @@ export async function generateReply(message) {
   const client = getClient();
 
   if (!client) {
-    return { ok: false, status: 500, error: 'Missing OPENAI_API_KEY in environment variables.' };
+    return {
+      ok: false,
+      status: 500,
+      error: 'Missing DEEPSEEK_API_KEY in environment variables.',
+    };
   }
 
   try {
-    const result = await client.responses.create({
+    const result = await client.chat.completions.create({
       model: getModel(),
-      instructions: SYSTEM_PROMPT,
-      input: normalizedMessage,
-      max_output_tokens: 120,
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: normalizedMessage },
+      ],
+      max_tokens: 120,
+      temperature: 1.1,
     });
 
-    const output = result.output_text?.trim();
+    const output = result.choices?.[0]?.message?.content?.trim();
 
     if (!output) {
-      return { ok: false, status: 502, error: 'OpenAI returned an empty response.' };
+      return { ok: false, status: 502, error: 'DeepSeek returned an empty response.' };
     }
 
     return {
@@ -76,14 +89,14 @@ export async function generateReply(message) {
     const status = resolveStatus(error);
 
     if (status === 401) {
-      return { ok: false, status, error: 'OPENAI_API_KEY 无效或没有权限。' };
+      return { ok: false, status, error: 'DEEPSEEK_API_KEY 无效或没有权限。' };
     }
 
     if (status === 429) {
       return {
         ok: false,
         status,
-        error: 'OpenAI 请求被限流，或当前项目没有可用额度。请检查账户计费与限额。',
+        error: 'DeepSeek 请求被限流，或当前账号额度不足。请检查账户余额与调用限制。',
       };
     }
 

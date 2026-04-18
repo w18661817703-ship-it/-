@@ -1,19 +1,19 @@
 # Emotion Purifier Shield
 
-前端保留 Vite，后端新增 Express，通过 OpenAI API 生成“高情商阴阳怪气回复”。
+前端保留 Vite，后端新增 Express，通过 DeepSeek API 生成“高情商阴阳怪气回复”。
 
 ## 环境变量
 
 在项目根目录创建 `.env`：
 
 ```bash
-OPENAI_API_KEY=your_openai_api_key
-OPENAI_MODEL=gpt-5.2
+DEEPSEEK_API_KEY=your_deepseek_api_key
+DEEPSEEK_MODEL=deepseek-chat
 PORT=3001
 CLIENT_ORIGIN=http://localhost:3000
 ```
 
-如果你的账号暂时没有 `gpt-5.2` 访问权限，可以把 `OPENAI_MODEL` 改成 `gpt-5-mini`。
+默认模型使用 `deepseek-chat`。
 
 ## 启动
 
