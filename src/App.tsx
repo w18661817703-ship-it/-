@@ -54,7 +54,7 @@ export default function App() {
       const data = (await response.json()) as { error?: string; result?: string };
 
       if (!response.ok || !data.result) {
-        throw new Error(data.error || 'AI 回复失败，请稍后重试。');
+        throw new Error(data.error || 'AI 过滤失败，请稍后重试。');
       }
 
       await ensureMinimumLoading(startedAt);
@@ -87,17 +87,17 @@ export default function App() {
             </svg>
           </div>
           <h1 className="text-[32px] font-bold tracking-[-0.02em] bg-clip-text text-transparent bg-linear-to-b from-white to-[#aaa] mb-2">
-            情绪净化盾
+            高情商输出过滤
           </h1>
           <p className="text-[#888888] text-[14px] leading-6">
-            把刺耳攻击重构成优雅、礼貌、但足够扎心的高情商回击。
+            把冲动、过激、带屏蔽词或变体脏话的话，改写成强硬、克制、但更容易过审的表达。
           </p>
         </header>
 
         <textarea
           value={input}
           onChange={(event) => setInput(event.target.value)}
-          placeholder="输入那些让你不舒服的话..."
+          placeholder="输入原始评论或想说的话..."
           className="w-full h-[120px] bg-[rgba(0,0,0,0.5)] border border-[rgba(255,255,255,0.1)] rounded-[12px] p-4 text-[14px] text-white resize-none outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors"
         />
 
@@ -109,12 +109,12 @@ export default function App() {
           {loading ? (
             <>
               <Sparkles className="w-4 h-4 animate-spin" />
-              AI 正在重构情绪...
+              AI 正在调整语气...
             </>
           ) : (
             <>
               <Send className="w-4 h-4" />
-              执行净化
+              开始过滤
             </>
           )}
         </button>
@@ -128,7 +128,7 @@ export default function App() {
               className="border-t border-[rgba(255,255,255,0.1)] pt-6 flex flex-col items-center justify-center"
             >
               <div className="text-[11px] uppercase tracking-[0.1em] text-[#888888] mb-3">
-                {error ? '请求状态' : '净化结果'}
+                {error ? '请求状态' : '过滤结果'}
               </div>
               <p className={`text-[16px] leading-7 ${error ? 'text-[#ffb4b4]' : 'text-white'}`}>
                 {feedback}
