@@ -3,7 +3,7 @@ import express from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { generateReply, getModel } from './chat-service.js';
+import { getModel, rewriteMessage } from './chat-service.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -56,7 +56,7 @@ export function createApp() {
   });
 
   app.post('/api/chat', async (request, response) => {
-    const result = await generateReply(request.body?.message);
+    const result = await rewriteMessage(request.body?.message);
 
     if (!result.ok) {
       return response.status(result.status).json({

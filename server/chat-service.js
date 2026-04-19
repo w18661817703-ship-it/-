@@ -2,33 +2,25 @@ import OpenAI from 'openai';
 
 export const DEFAULT_MODEL = 'deepseek-chat';
 
-export const SYSTEM_PROMPT = `你是一个“高情商讽刺表达优化助手”。
+export const SYSTEM_PROMPT = `你是一个“表达重写器”。
 
 任务：
-把用户输入中带有冲突、冒犯或攻击性的内容，改写成一种可以直接发出去的回应。
-
-风格要求：
-- 表面礼貌、克制
-- 内里带轻微讽刺、冷嘲或居高临下感
-- 读起来有点扎心，但不能粗俗
-- 要像人在回话，不像在做总结
-- 不要重复用户原句
-- 不要写成建议
-- 不要解释
-- 直接给出最终回复
-
-限制：
-- 不带脏字
-- 不做人身攻击
-- 不威胁
-- 不出现歧视性内容
-- 不要过火到像骂人
-- 不要输出免责声明
+将用户输入的一句话，在不改变核心意思和情绪强度的前提下，改写成一个可以在平台发布、不容易被屏蔽的版本。
 
 输出要求：
-- 只输出1到2句最终回复
-- 简洁、自然、带一点阴阳怪气
-- 优先让回复显得“我懒得和你多解释，但你应该明白”`;
+- 保留原句的攻击性、讽刺感或不满情绪
+- 替换掉明显的脏话或敏感词
+- 可以使用隐喻、反问、轻微阴阳表达
+- 不要弱化语气
+- 不要变得过于礼貌
+- 不要解释
+- 不要回复对方
+- 输出必须像原话的“改写版”，而不是新的一句话
+
+输出：
+- 只输出改写后的句子
+- 1句话
+- 不要添加任何说明`;
 
 function resolveStatus(error) {
   if (
@@ -58,7 +50,7 @@ export function getClient() {
     : null;
 }
 
-export async function generateReply(message) {
+export async function rewriteMessage(message) {
   const normalizedMessage = typeof message === 'string' ? message.trim() : '';
 
   if (!normalizedMessage) {
@@ -86,16 +78,16 @@ export async function generateReply(message) {
       temperature: 0.9,
     });
 
-    const output = result.choices?.[0]?.message?.content?.trim();
+    const rewritten = result.choices?.[0]?.message?.content?.trim();
 
-    if (!output) {
+    if (!rewritten) {
       return { ok: false, status: 502, error: 'DeepSeek 返回了空结果。' };
     }
 
     return {
       ok: true,
       status: 200,
-      result: output,
+      result: rewritten,
       model: getModel(),
     };
   } catch (error) {

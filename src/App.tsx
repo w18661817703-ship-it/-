@@ -29,7 +29,7 @@ export default function App() {
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handlePurify = async () => {
+  const handleRewrite = async () => {
     const message = input.trim();
 
     if (!message) {
@@ -54,7 +54,7 @@ export default function App() {
       const data = (await response.json()) as { error?: string; result?: string };
 
       if (!response.ok || !data.result) {
-        throw new Error(data.error || 'AI 过滤失败，请稍后重试。');
+        throw new Error(data.error || 'AI 改写失败，请稍后重试。');
       }
 
       await ensureMinimumLoading(startedAt);
@@ -87,34 +87,34 @@ export default function App() {
             </svg>
           </div>
           <h1 className="text-[32px] font-bold tracking-[-0.02em] bg-clip-text text-transparent bg-linear-to-b from-white to-[#aaa] mb-2">
-            高情商输出过滤
+            表达重写器
           </h1>
           <p className="text-[#888888] text-[14px] leading-6">
-            把冲动、过激、带屏蔽词或变体脏话的话，改写成强硬、克制、但更容易过审的表达。
+            把原句里明显的脏话、敏感词和屏蔽词，换成意思基本不变、但更不容易被拦的说法。
           </p>
         </header>
 
         <textarea
           value={input}
           onChange={(event) => setInput(event.target.value)}
-          placeholder="输入原始评论或想说的话..."
+          placeholder="输入要改写的原句..."
           className="w-full h-[120px] bg-[rgba(0,0,0,0.5)] border border-[rgba(255,255,255,0.1)] rounded-[12px] p-4 text-[14px] text-white resize-none outline-none focus:border-[rgba(255,255,255,0.3)] transition-colors"
         />
 
         <button
-          onClick={handlePurify}
+          onClick={handleRewrite}
           disabled={loading || !input.trim()}
           className="bg-white text-black font-semibold rounded-[12px] px-6 py-3.5 cursor-pointer transition-all flex items-center justify-center gap-2 hover:bg-[#e0e0e0] disabled:bg-[#333] disabled:text-[#777] disabled:cursor-not-allowed"
         >
           {loading ? (
             <>
               <Sparkles className="w-4 h-4 animate-spin" />
-              AI 正在调整语气...
+              AI 正在重写原话...
             </>
           ) : (
             <>
               <Send className="w-4 h-4" />
-              开始过滤
+              开始改写
             </>
           )}
         </button>
@@ -128,7 +128,7 @@ export default function App() {
               className="border-t border-[rgba(255,255,255,0.1)] pt-6 flex flex-col items-center justify-center"
             >
               <div className="text-[11px] uppercase tracking-[0.1em] text-[#888888] mb-3">
-                {error ? '请求状态' : '过滤结果'}
+                {error ? '请求状态' : '改写结果'}
               </div>
               <p className={`text-[16px] leading-7 ${error ? 'text-[#ffb4b4]' : 'text-white'}`}>
                 {feedback}
