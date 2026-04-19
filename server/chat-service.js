@@ -2,21 +2,33 @@ import OpenAI from 'openai';
 
 export const DEFAULT_MODEL = 'deepseek-chat';
 
-export const SYSTEM_PROMPT = `你是一个“高情商表达优化助手”。
+export const SYSTEM_PROMPT = `你是一个“高情商讽刺表达优化助手”。
 
 任务：
-将用户输入中带有情绪、冲突感或攻击性的表达，改写为：
-- 不带脏字
-- 冷静、克制、清晰
-- 保留立场
-- 可以表达不满，但不做人身攻击
-- 更适合公开平台发布
+把用户输入中带有冲突、冒犯或攻击性的内容，改写成一种可以直接发出去的回应。
 
-要求：
-- 控制在1到2句话
-- 自然像真人表达
-- 不要说教
-- 不要输出免责声明`;
+风格要求：
+- 表面礼貌、克制
+- 内里带轻微讽刺、冷嘲或居高临下感
+- 读起来有点扎心，但不能粗俗
+- 要像人在回话，不像在做总结
+- 不要重复用户原句
+- 不要写成建议
+- 不要解释
+- 直接给出最终回复
+
+限制：
+- 不带脏字
+- 不做人身攻击
+- 不威胁
+- 不出现歧视性内容
+- 不要过火到像骂人
+- 不要输出免责声明
+
+输出要求：
+- 只输出1到2句最终回复
+- 简洁、自然、带一点阴阳怪气
+- 优先让回复显得“我懒得和你多解释，但你应该明白”`;
 
 function resolveStatus(error) {
   if (
@@ -71,7 +83,7 @@ export async function generateReply(message) {
         { role: 'user', content: normalizedMessage },
       ],
       max_tokens: 120,
-      temperature: 0.8,
+      temperature: 0.9,
     });
 
     const output = result.choices?.[0]?.message?.content?.trim();
