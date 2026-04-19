@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: emotion-purifier-shield
+    runtime: node
+    region: singapore
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    # Add your own domain in Render after the first deploy.
+    # The default onrender.com domain is not a reliable choice for mainland China.
+    # domains:
+    #   - app.example.com
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: MODEL_NAME
+        value: deepseek-chat
