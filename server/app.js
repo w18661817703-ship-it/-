@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getModel, rewriteMessage } from './chat-service.js';
+import { dailyChatLimit } from './daily-rate-limit.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -55,7 +56,7 @@ export function createApp() {
     });
   });
 
-  app.post('/api/chat', async (request, response) => {
+  app.post('/api/chat', dailyChatLimit, async (request, response) => {
     const result = await rewriteMessage(request.body?.message);
 
     if (!result.ok) {
